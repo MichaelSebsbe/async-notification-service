@@ -1,5 +1,5 @@
-import RabbitMQ from "../RabbitMQ/RabbitMQ";
-import { NotificationsFactory, NotificationRequest } from "../Notification";
+import RabbitMQ from "./RabbitMQ/RabbitMQ";
+import { NotificationsFactory, NotificationRequest } from "./Services/Notification";
 
 const rabbit = RabbitMQ.getInstance()
 
