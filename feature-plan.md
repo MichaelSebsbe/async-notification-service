@@ -7,14 +7,15 @@
 4. Handle tokens without user IDs (unregistered/anonymous).
 
 ## Lightweight SQL Database Schema
-1. Define a table for tokens with fields for token value, optional user ID, creation date, etc.  
-2. Implement CRUD operations in Express.js routes.  
-3. Use migrations or a minimal SQL script to manage schema changes.
+1. Define a table for tokens using SQLite syntax.
+2. Implement CRUD operations in Express.js routes using the `sqlite3` package.
+3. Use a simple SQL initialization script for schema setup.
 
 ## Next Steps
-1. Implement and test Express.js routes.  
-2. Integrate database logic.  
-3. Validate token management flow.
+1. Install and configure SQLite and sqlite3 npm package.
+2. Implement and test Express.js routes.
+3. Create database initialization script.
+4. Validate token management flow.
 
 ## Implementation Details
 
@@ -68,15 +69,24 @@ interface UpdateTokenPayload {
 
 ### Database Schema
 ```sql
-CREATE TABLE tokens (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  token VARCHAR(255) NOT NULL UNIQUE,
-  user_id VARCHAR(255),
-  platform VARCHAR(10) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS tokens (
+  id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
+  token TEXT NOT NULL UNIQUE,
+  user_id TEXT,
+  platform TEXT NOT NULL CHECK (platform IN ('ios', 'android', 'web')),
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX idx_tokens_user_id ON tokens(user_id);
-CREATE INDEX idx_tokens_token ON tokens(token);
+CREATE INDEX IF NOT EXISTS idx_tokens_user_id ON tokens(user_id);
+CREATE INDEX IF NOT EXISTS idx_tokens_token ON tokens(token);
+```
+
+### SQLite Configuration
+```javascript
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('notifications.db', (err) => {
+  if (err) console.error('Database connection failed:', err);
+  console.log('Connected to SQLite database');
+});
 ```
