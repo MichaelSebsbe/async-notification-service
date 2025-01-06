@@ -24,7 +24,7 @@
 interface Token {
   id: string;
   token: string;
-  userId?: string;
+  userId?: number;
   platform: 'ios' | 'android' | 'web';
   createdAt: Date;
   updatedAt: Date;
@@ -32,14 +32,31 @@ interface Token {
 
 interface RegisterTokenPayload {
   token: string;
-  userId?: string;
+  userId?: number;
   platform: 'ios' | 'android' | 'web';
 }
 
 interface UpdateTokenPayload {
   oldToken: string;
   newToken: string;
-  userId?: string;
+  userId?: number;
+}
+
+interface NotificationPayload {
+  title: string;
+  body: string;
+  data?: Record<string, any>;
+}
+
+interface SendNotificationResponse {
+  success: boolean;
+  sent: number;
+  failed: number;
+  errors?: string[];
+}
+
+interface PlatformNotificationPayload extends NotificationPayload {
+  platforms: ('ios' | 'android' | 'web')[];
 }
 ```
 
@@ -67,12 +84,36 @@ interface UpdateTokenPayload {
 - Response: `Token`
 - Description: Update existing token value
 
+#### Send Notification to All Users
+- **POST** `/api/notifications/broadcast`
+- Payload: `NotificationPayload`
+- Response: `SendNotificationResponse`
+- Description: Send notification to all registered tokens
+
+#### Send Notification to User Group
+- **POST** `/api/notifications/users`
+- Payload: `NotificationPayload & { userIds: number[] }`
+- Response: `SendNotificationResponse`
+- Description: Send notification to specific users by their IDs
+
+#### Send Notification by Platform
+- **POST** `/api/notifications/platforms`
+- Payload: `PlatformNotificationPayload`
+- Response: `SendNotificationResponse`
+- Description: Send notification to all users on specified platforms
+
+#### Send Notification to Specific Token
+- **POST** `/api/notifications/token/:token`
+- Payload: `NotificationPayload`
+- Response: `SendNotificationResponse`
+- Description: Send notification to a specific token
+
 ### Database Schema
 ```sql
 CREATE TABLE IF NOT EXISTS tokens (
   id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
   token TEXT NOT NULL UNIQUE,
-  user_id TEXT,
+  user_id INTEGER,
   platform TEXT NOT NULL CHECK (platform IN ('ios', 'android', 'web')),
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -90,3 +131,4 @@ const db = new sqlite3.Database('notifications.db', (err) => {
   console.log('Connected to SQLite database');
 });
 ```
+````
