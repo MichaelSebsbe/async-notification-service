@@ -9,12 +9,12 @@ export interface Token {
 
 export interface RegisterTokenPayload {
     token: string;
-    userId?: string;
+    userId?: number;
     platform: 'ios' | 'android' | 'web';
 }
 
 export interface UpdateTokenPayload {
     oldToken: string;
     newToken: string;
-    userId?: string;
+    userId?: number;
 }

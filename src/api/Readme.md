@@ -25,7 +25,7 @@ This service manages device tokens for push notifications across different platf
 ```json
 {
     "token": "string",
-    "userId": "string" (optional),
+    "userId": "number" (optional),
     "platform": "ios" | "android" | "web"
 }
 ```
@@ -34,7 +34,7 @@ This service manages device tokens for push notifications across different platf
 {
     "id": "string",
     "token": "string",
-    "userId": "string" (optional),
+    "userId": "number" (optional),
     "platform": "ios" | "android" | "web",
     "createdAt": "date",
     "updatedAt": "date"
@@ -47,7 +47,7 @@ This service manages device tokens for push notifications across different platf
 {
     "oldToken": "string",
     "newToken": "string",
-    "userId": "string" (optional)
+    "userId": "number" (optional)
 }
 ```
 **Response:** (200 OK)
@@ -55,7 +55,7 @@ This service manages device tokens for push notifications across different platf
 {
     "id": "string",
     "token": "string",
-    "userId": "string" (optional),
+    "userId": "number" (optional),
     "platform": "ios" | "android" | "web",
     "createdAt": "date",
     "updatedAt": "date"
