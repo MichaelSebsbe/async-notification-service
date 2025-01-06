@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import tokenRoutes from './routes/tokenRoutes';
+import notificationRoutes from './routes/notificationRoutes';
 
 export class Server {
     private app: Express;
@@ -26,7 +27,7 @@ export class Server {
         });
 
         // API routes
-        this.app.use('/api/notifications', tokenRoutes);
+        this.app.use('/api/notifications', [tokenRoutes, notificationRoutes]);
 
         // 404 handler
         this.app.use((req: Request, res: Response) => {

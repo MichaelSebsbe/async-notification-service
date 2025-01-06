@@ -18,6 +18,15 @@ This service manages device tokens for push notifications across different platf
 | DELETE | `/api/notifications/user/:userId/token` | Remove all tokens for a user |
 | PUT | `/api/notifications/token` | Update an existing token |
 
+### Send Notifications
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/notifications/broadcast` | Broadcast notification to all registered devices |
+| POST | `/api/notifications/users` | Send notification to specific users |
+| POST | `/api/notifications/platforms` | Send notification to specific platforms |
+| POST | `/api/notifications/token/:token` | Send notification to a specific token |
+
 ## Request/Response Formats
 
 ### Register Token (POST `/api/notifications/token`)
@@ -81,6 +90,88 @@ This service manages device tokens for push notifications across different platf
 ```json
 {
     "success": true
+}
+```
+
+## Sending Notifications
+### Broadcast Notification (POST `/api/notifications/broadcast`)
+**Request Body:**
+```json
+{
+    "title": "string",
+    "body": "string",
+    "data": object (optional)
+}
+```
+**Response:** (200 OK)
+```json
+{
+    "success": boolean,
+    "sent": number,
+    "failed": number,
+    "errors": string[] (optional)
+}
+```
+
+### Send to Users (POST `/api/notifications/users`)
+**Request Body:**
+```json
+{
+    "userIds": number[],
+    "title": "string",
+    "body": "string",
+    "data": object (optional)
+}
+```
+**Response:** (200 OK)
+```json
+{
+    "success": boolean,
+    "sent": number,
+    "failed": number,
+    "errors": string[] (optional)
+}
+```
+
+### Send to Platforms (POST `/api/notifications/platforms`)
+**Request Body:**
+```json
+{
+    "platforms": ("ios" | "android" | "web")[],
+    "title": "string",
+    "body": "string",
+    "data": object (optional)
+}
+```
+**Response:** (200 OK)
+```json
+{
+    "success": boolean,
+    "sent": number,
+    "failed": number,
+    "errors": string[] (optional)
+}
+```
+
+### Send to Token (POST `/api/notifications/token/:token`)
+**Parameters:**
+- `token`: The device token to send notification to
+
+**Request Body:**
+```json
+{
+    "title": "string",
+    "body": "string",
+    "data": object (optional)
+}
+```
+**Response:** (200 OK)
+```json
+{
+    "success": boolean,
+    "sent": number,
+    "failed": number,
+    "errors": string[] (optional)
 }
 ```
 
