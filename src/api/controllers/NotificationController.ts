@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import { NotificationService } from '../services/NotificationService';
 
-export class NotificationController {
+import { ControllerErrorHandling } from './ControllerErrorHandling';
+
+export class NotificationController extends ControllerErrorHandling {
   private notificationService: NotificationService;
 
   constructor() {
+    super();
     this.notificationService = new NotificationService();
   }
 

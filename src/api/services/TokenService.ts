@@ -18,11 +18,12 @@ export class TokenService {
         const sql = `
             CREATE TABLE IF NOT EXISTS tokens (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                token TEXT UNIQUE NOT NULL,
+                token TEXT NOT NULL,
                 user_id INT NOT NULL,
                 platform TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(token, user_id)
             )
         `;
 
@@ -43,10 +44,15 @@ export class TokenService {
                 if (err) {
                     // Handle unique constraint violation
                     if (err.message.includes('UNIQUE constraint failed')) {
-                        reject(new Error('Token already exists'));
+                        return reject(new Error('Token User Pair already exists'));
                     }
-                    reject(err);
+                    return reject(err);
                 }
+
+                if (!row) {
+                    return reject(new Error('Failed to create token'));
+                }
+
                 resolve(this.mapRowToToken(row));
             });
         });

@@ -2,10 +2,13 @@ import { Request, Response } from 'express';
 import { TokenService } from '../services/TokenService';
 import { RegisterTokenPayload, UpdateTokenPayload } from '../types/Token';
 
-export class TokenController {
+import { ControllerErrorHandling } from './ControllerErrorHandling';
+
+export class TokenController extends ControllerErrorHandling {
     private tokenService: TokenService;
     
     constructor() {
+        super();
         this.tokenService = new TokenService();
     }
 
@@ -21,11 +24,7 @@ export class TokenController {
             const token = await this.tokenService.register(payload);
             res.status(201).json(token);
         } catch (error: unknown) {
-            if (error instanceof Error && error.message === 'Token already exists') {
-                res.status(409).json({ error: error.message });
-                return;
-            }
-            res.status(500).json({ error: 'Internal server error' });
+            this.handleError(error, res);
         }
     };
 
@@ -35,8 +34,8 @@ export class TokenController {
             
             await this.tokenService.removeByToken(token);
             res.status(200).json({ success: true });
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+        } catch (error: unknown) {
+            this.handleError(error, res);
         }
     };
 
@@ -46,8 +45,8 @@ export class TokenController {
             
             await this.tokenService.removeByUser(userId);
             res.status(200).json({ success: true });
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+        } catch (error: unknown) {
+            this.handleError(error, res);
         }
     };
 
@@ -62,8 +61,8 @@ export class TokenController {
 
             const token = await this.tokenService.update(payload);
             res.status(200).json(token);
-        } catch (error) {
-            res.status(500).json({ error: 'Internal server error' });
+        } catch (error: unknown) {
+            this.handleError(error, res);
         }
     };
 }
