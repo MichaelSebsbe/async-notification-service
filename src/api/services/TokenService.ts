@@ -1,17 +1,14 @@
-import sqlite3 from 'sqlite3';
-import { Database } from 'sqlite3';
+// import sqlite3 from 'sqlite3';
+
+import db from '../config/db';
 
 import { Token, RegisterTokenPayload, UpdateTokenPayload} from '../types/Token';
 
 export class TokenService {
-    private db: Database;
+    private db = db;
 
     constructor() {
-        // NOTE: Database path should come from configuration
-        this.db = new sqlite3.Database('notifications.db', (err) => {
-            if (err) console.error('Database connection failed:', err);
-            else this.initializeTable();
-        });
+        this.initializeTable();
     }
 
     private initializeTable(): void {
