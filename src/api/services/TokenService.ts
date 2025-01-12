@@ -101,6 +101,18 @@ export class TokenService {
         });
     }
 
+    async getAllTokens(): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT distinct token, platform FROM tokens';
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
     private mapRowToToken(row: any): Token {
         return {
             id: row.id,

@@ -1,5 +1,6 @@
 import RabbitMQ from "./RabbitMQ/RabbitMQ";
-import { NotificationsFactory, NotificationRequest } from "./Services/Notification";
+// import { NotificationsFactory, NotificationRequest } from "./Services/Notification";
+import sendNotification from "./Services/NotificationConsumer";
 import { Server } from './api/Server';
 
 const rabbit = RabbitMQ.getInstance()
@@ -34,11 +35,16 @@ bootstrap();
 // Consume messages
 rabbit.consume((msg) => {
     try{
-        const notifications = NotificationsFactory.create(msg);
+        console.log(` [x] Received: ${msg}`);
+        // const notifications = NotificationsFactory.create(msg);
 
-        for(const notification of notifications){
-            notification.send();
-        }
+        // for(const notification of notifications){
+        //     notification.send();
+        // }
+
+        let message = JSON.parse(msg);
+
+        sendNotification(message.tokens, message.title, message.body);
         
     }catch(e){
         console.error(`Error ${e}:  ${msg}`);
