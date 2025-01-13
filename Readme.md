@@ -2,6 +2,15 @@
 
 A Node.js service that handles push notifications using RabbitMQ as a message broker. Currently supports iOS push notifications via Apple Push Notification service (APNs).
 
+## Notification Methods
+
+This service provides two distinct ways to send notifications:
+1. **Direct RabbitMQ Integration**: Connect directly to the RabbitMQ message broker to send notifications (see [Message Format](#message-format) below)
+2. **HTTP API**: Use the REST API endpoints to send notifications and manage device tokens. 
+(see [API Documentation](src/api/Readme.md))
+
+> **Note**: Device token management (registration, updates, deletion) is only available through the HTTP API.
+
 ## Prerequisites
 
 - Node.js (v16 or higher)
@@ -67,8 +76,7 @@ Send JSON messages to RabbitMQ in the following format:
 {
   "title": "Notification Title",
   "body": "Notification Body",
-  "platforms": ["ios"],
-  "identifiers": ["device_token_1", "device_token_2"]
+  "tokens": ["device_token_1", "device_token_2"]
 }
 ```
 
