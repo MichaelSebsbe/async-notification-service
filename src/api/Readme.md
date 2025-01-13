@@ -1,6 +1,7 @@
 # Notification Service API Documentation
 
 This service manages device tokens for push notifications across different platforms (iOS, Android, and Web).
+> NOTE: Android and Web are not yet implemented 
 
 ## Endpoints
 
@@ -137,7 +138,7 @@ This service manages device tokens for push notifications across different platf
 **Request Body:**
 ```json
 {
-    "platforms": ("ios" | "android" | "web")[],
+    "platforms": ("ios" | "android" | "web")[], //android and web not implemented yet
     "title": "string",
     "body": "string",
     "data": object (optional)
@@ -188,3 +189,4 @@ The service supports the following platforms:
 - iOS (`ios`)
 - Android (`android`)
 - Web (`web`)
+> NOTE: Android and Web are not yet implemented 
