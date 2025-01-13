@@ -30,30 +30,21 @@ export class NotificationService {
   }
 
   async sendToUsers(userIds: number[], payload: NotificationPayload): Promise<SendNotificationResponse> {
-    return {
-      success: false,
-      sent: 0,
-      failed: 0,
-      errors: [`SendToUsers service called with ${userIds.length} users but not implemented`]
-    };
+    const tokens = await this.tokenService.getTokenByUserids(userIds) as MobileRegID[];
+
+    return this.sendNotifications(tokens, payload); 
+    
   }
 
   async sendToPlatforms(payload: PlatformNotificationPayload): Promise<SendNotificationResponse> {
-    return {
-      success: false,
-      sent: 0,
-      failed: 0,
-      errors: ['SendToPlatforms service called but not implemented']
-    };
+    const tokens = await this.tokenService.getTokenByPlatforms(payload.platforms) as MobileRegID[];
+
+    return this.sendNotifications(tokens, payload);
   }
 
-  async sendToToken(token: string, payload: NotificationPayload): Promise<SendNotificationResponse> {
-    return {
-      success: false,
-      sent: 0,
-      failed: 0,
-      errors: [`SendToToken service called with token: ${token} but not implemented`]
-    };
+  async sendToTokens(token: string[], payload: NotificationPayload): Promise<SendNotificationResponse> {
+    //TODO: switch to platform specific send
+    return this.sendNotifications(token.map(t => ({ token: t, platform: 'ios' })), payload);
   }
 
   private async sendNotifications(tokens: MobileRegID[], payload: NotificationPayload): Promise<SendNotificationResponse> {

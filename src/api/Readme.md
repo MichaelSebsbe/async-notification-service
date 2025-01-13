@@ -25,7 +25,7 @@ This service manages device tokens for push notifications across different platf
 | POST | `/api/notifications/broadcast` | Broadcast notification to all registered devices |
 | POST | `/api/notifications/users` | Send notification to specific users |
 | POST | `/api/notifications/platforms` | Send notification to specific platforms |
-| POST | `/api/notifications/token/:token` | Send notification to a specific token |
+| POST | `/api/notifications/tokens` | Send notification to a specific token |
 
 ## Request/Response Formats
 
@@ -153,13 +153,12 @@ This service manages device tokens for push notifications across different platf
 }
 ```
 
-### Send to Token (POST `/api/notifications/token/:token`)
-**Parameters:**
-- `token`: The device token to send notification to
+### Send to Token (POST `/api/notifications/tokens`)
 
 **Request Body:**
 ```json
-{
+{   
+    "tokens": string[],
     "title": "string",
     "body": "string",
     "data": object (optional)

@@ -113,6 +113,31 @@ export class TokenService {
         });
     }
 
+    async getTokenByUserids(userIds: number[]): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT token, platform FROM tokens WHERE user_id IN (' + userIds.join() + ')';
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
+    async getTokenByPlatforms(platforms: string[]): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT token, platform FROM tokens WHERE platform IN ("' + platforms.join('","') + '")';
+            console.log(sql);
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
     private mapRowToToken(row: any): Token {
         return {
             id: row.id,

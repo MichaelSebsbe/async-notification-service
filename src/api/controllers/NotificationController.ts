@@ -42,10 +42,10 @@ export class NotificationController extends ControllerErrorHandling {
     }
   };
 
-  public sendToToken = async (req: Request, res: Response) => {
+  public sendToTokens = async (req: Request, res: Response) => {
     try {
-      const { token } = req.params;
-      const response = await this.notificationService.sendToToken(token, req.body);
+      const { tokens } = req.body;
+      const response = await this.notificationService.sendToTokens(tokens, req.body);
       res.json(response);
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
