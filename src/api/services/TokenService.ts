@@ -1,0 +1,161 @@
+// import sqlite3 from 'sqlite3';
+
+import db from '../config/db';
+
+import { Token, RegisterTokenPayload, UpdateTokenPayload} from '../types/Token';
+
+export class TokenService {
+    private db = db;
+
+    constructor() {
+        this.initializeTable();
+    }
+
+    private initializeTable(): void {
+        const sql = `
+            CREATE TABLE IF NOT EXISTS tokens (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                token TEXT NOT NULL,
+                user_id INT NOT NULL,
+                platform TEXT NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(token, user_id)
+            )
+        `;
+
+        this.db.run(sql, (err) => {
+            if (err) console.error('Table creation failed:', err);
+        });
+    }
+
+    async register(payload: RegisterTokenPayload): Promise<Token> {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                INSERT INTO tokens (token, user_id, platform)
+                VALUES (?, ?, ?)
+                RETURNING *;
+            `;
+            
+            this.db.get(sql, [payload.token, payload.userId, payload.platform], (err, row) => {
+                if (err) {
+                    // Handle unique constraint violation
+                    if (err.message.includes('UNIQUE constraint failed')) {
+                        return reject(new Error('Token User Pair already exists'));
+                    }
+                    return reject(err);
+                }
+
+                if (!row) {
+                    return reject(new Error('Failed to create token'));
+                }
+
+                resolve(this.mapRowToToken(row));
+            });
+        });
+    }
+
+    async removeByToken(token: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const sql = 'DELETE FROM tokens WHERE token = ?';
+            
+            this.db.run(sql, [token], (err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    }
+
+    async removeByUser(userId: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const sql = 'DELETE FROM tokens WHERE user_id = ?';
+            
+            this.db.run(sql, [userId], (err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    }
+
+    async update(payload: UpdateTokenPayload): Promise<Token> {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                UPDATE tokens 
+                SET token = ?, updated_at = datetime('now')
+                WHERE token = ?
+                RETURNING *;
+            `;
+            
+            this.db.get(sql, [payload.newToken, payload.oldToken], (err, row) => {
+                if (err) {
+                    if (err.message.includes('UNIQUE constraint failed')) {
+                        reject(new Error('New token already exists'));
+                    }
+                    reject(err);
+                }
+                if (!row) {
+                    reject(new Error('Token not found'));
+                }
+                resolve(this.mapRowToToken(row));
+            });
+        });
+    }
+
+    async getAllTokens(): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT distinct token, platform FROM tokens';
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
+    async getTokenByUserids(userIds: number[]): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT token, platform FROM tokens WHERE user_id IN (' + userIds.join() + ')';
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
+    async getTokenByPlatforms(platforms: string[]): Promise<Array<any>> {
+        return new Promise((resolve, reject) => {
+            const sql = 'SELECT token, platform FROM tokens WHERE platform IN ("' + platforms.join('","') + '")';
+            console.log(sql);
+            
+            this.db.all(sql, [], (err, rows) => {
+                if (err) return reject(err);
+
+                resolve(rows);
+            });
+        });
+    }
+
+    private mapRowToToken(row: any): Token {
+        return {
+            id: row.id,
+            token: row.token,
+            userId: row.user_id,
+            platform: row.platform,
+            createdAt: new Date(row.created_at),
+            updatedAt: new Date(row.updated_at)
+        };
+    }
+
+    // Clean up database connection
+    async close(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.db.close((err) => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    }
+}
