@@ -3,17 +3,22 @@
 This service manages device tokens for push notifications across different platforms (iOS, Android, and Web).
 > NOTE: Android and Web are not yet implemented 
 
-## Authentication
+## 🔐 Authentication
 All API requests require an `ns-api-key` to be included in the request headers that matches the `API_KEY` you provided in your .env file:
 
-## Endpoints
+## 🛠️ Management Portal
+If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show simple portal for sending broadcast notifications to all registered tokens.
 
-### Health Check
+![Management Portal](portal.png)
+
+## 📋 Endpoints
+
+### 🩺 Health Check
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/health` | Check API health status |
 
-### Token Management
+### 🔑 Token Management
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -23,7 +28,7 @@ All API requests require an `ns-api-key` to be included in the request headers t
 | DELETE | `/api/notifications/session/:sessionId` | Remove token by session ID |
 | PUT | `/api/notifications/token` | Update an existing token |
 
-### Send Notifications
+### 📤 Send Notifications
 
 | Method | Path | Description |
 |--------|------|-------------|
@@ -32,7 +37,7 @@ All API requests require an `ns-api-key` to be included in the request headers t
 | POST | `/api/notifications/platforms` | Send notification to specific platforms |
 | POST | `/api/notifications/tokens` | Send notification to a specific token |
 
-## Request/Response Formats
+## 📄 Request/Response Formats
 
 ### Register Token (POST `/api/notifications/token`)
 **Request Body:**
@@ -111,7 +116,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 }
 ```
 
-## Sending Notifications
+## 📤 Sending Notifications
 ### Broadcast Notification (POST `/api/notifications/broadcast`)
 **Request Body:**
 ```json
@@ -192,7 +197,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 }
 ```
 
-## Error Responses
+## ❌ Error Responses
 
 | Status Code | Description |
 |-------------|-------------|
@@ -201,7 +206,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 | 409 | Conflict - Token already exists |
 | 500 | Internal Server Error |
 
-## Platform Support
+## 📱 Platform Support
 The service supports the following platforms:
 - iOS (`ios`)
 - Android (`android`)

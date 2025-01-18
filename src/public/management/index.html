@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Management Portal</title>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap">
+    <link rel="stylesheet" type="text/css" href="./styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔔 Notification Service Management Portal</h1>
+        <label>API Key: <input id="apikey" /></label>
+        <label>Title: <input id="title" /></label>
+        <label>Body: <textarea id="body" rows="4"></textarea></label>
+        <button onclick="sendNotification()">Send To All</button>
+        <div id="message" class="message"></div>
+    </div>
+    <footer>
+        <a href="https://github.com/MichaelSebsbe/async-notification-service" target="_blank"><img src="logo.png" alt="Logo" class="footer-logo"></a>
+        <p><a href="https://github.com/MichaelSebsbe/async-notification-service" target="_blank">Developed by Michael Sebsbe</a></p>
+    </footer>
+    <script src="./script.js"></script>
+</body>
+</html>
