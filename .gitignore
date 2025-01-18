@@ -135,3 +135,7 @@ IOS
 
 #database
 notifications.db
+
+
+#featurePlan file for AI
+feature-plan.md
