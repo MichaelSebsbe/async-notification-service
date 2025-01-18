@@ -40,6 +40,8 @@ APN_KEY_PATH = "./IOS/AuthKey_YOUR_KEY_ID.p8"
 APN_TOPIC = "your.app.bundle.id"
 
 APN_TEST_DEVICE_TOKEN = "YOUR_DEVICE_TOKEN"
+
+CREATE_MANAGEMENT_PORTAL = true
 ```
 
 4. Place your APNs authentication key (`.p8` file) in the `IOS` directory
