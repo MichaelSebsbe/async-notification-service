@@ -3,6 +3,9 @@
 This service manages device tokens for push notifications across different platforms (iOS, Android, and Web).
 > NOTE: Android and Web are not yet implemented 
 
+## Authentication
+All API requests require an `ns-api-key` to be included in the request headers that matches the `API_KEY` you provided in your .env file:
+
 ## Endpoints
 
 ### Health Check
@@ -17,6 +20,7 @@ This service manages device tokens for push notifications across different platf
 | POST | `/api/notifications/token` | Register a new device token |
 | DELETE | `/api/notifications/token/:token` | Remove a specific token |
 | DELETE | `/api/notifications/user/:userId/token` | Remove all tokens for a user |
+| DELETE | `/api/notifications/session/:sessionId` | Remove token by session ID |
 | PUT | `/api/notifications/token` | Update an existing token |
 
 ### Send Notifications
@@ -50,6 +54,8 @@ This service manages device tokens for push notifications across different platf
     "updatedAt": "date"
 }
 ```
+
+NOTE: Store the id in pair with the users session to remove when user ends session.
 
 ### Update Token (PUT `/api/notifications/token`)
 **Request Body:**
@@ -86,6 +92,17 @@ This service manages device tokens for push notifications across different platf
 ### Remove User Tokens (DELETE `/api/notifications/user/:userId/token`)
 **Parameters:**
 - `userId`: The user ID whose tokens should be removed
+
+**Response:** (200 OK)
+```json
+{
+    "success": true
+}
+```
+
+### Remove Session Token (DELETE `/api/notifications/session/:sessionId`)
+**Parameters:**
+- `sessionId`: The session ID whose token should be removed
 
 **Response:** (200 OK)
 ```json
@@ -189,4 +206,4 @@ The service supports the following platforms:
 - iOS (`ios`)
 - Android (`android`)
 - Web (`web`)
-> NOTE: Android and Web are not yet implemented 
+> NOTE: Android and Web are not yet implemented

@@ -77,6 +77,20 @@ export class TokenService {
         });
     }
 
+    async removeBySession(sessionId: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const sql = 'DELETE FROM tokens WHERE id = ?';
+            
+            console.log(sessionId);
+
+            this.db.run(sql, [sessionId], function(err) {
+                if (err) return reject(err);
+                if (this.changes === 0) return reject(new Error('Token not found id: ' + sessionId));
+                resolve();
+            });
+        });
+    }
+
     async update(payload: UpdateTokenPayload): Promise<Token> {
         return new Promise((resolve, reject) => {
             const sql = `
