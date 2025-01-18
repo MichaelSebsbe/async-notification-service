@@ -7,7 +7,11 @@ A Node.js service that handles push notifications using RabbitMQ as a message br
 This service provides two distinct ways to send notifications:
 1. **Direct RabbitMQ Integration**: Connect directly to the RabbitMQ message broker to send notifications (see [Message Format](#message-format) below)
 2. **HTTP API**: Use the REST API endpoints to send notifications and manage device tokens. 
-(see [API Documentation](src/api/Readme.md))
+(see [API Documentation](src/api/Readme.md)). 
+- Comes with an optional Portal for broadcasting to all users.
+![Management Portal](src/api/portal.png)
+
+
 
 > **Note**: Device token management (registration, updates, deletion) is only available through the HTTP API.
 

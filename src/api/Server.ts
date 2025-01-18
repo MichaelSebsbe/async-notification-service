@@ -2,6 +2,7 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import tokenRoutes from './routes/tokenRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import path from 'path';
 
 export class Server {
     private app: Express;
@@ -28,6 +29,13 @@ export class Server {
 
         // API routes
         this.app.use('/api/notifications', [tokenRoutes, notificationRoutes]);
+
+        // Management portal route
+        if (process.env.CREATE_MANAGEMENT_PORTAL === 'true') {
+            this.app.use('/management', express.static(
+                path.join(__dirname, '../public/management')
+            ));
+        }
 
         // 404 handler
         this.app.use((req: Request, res: Response) => {

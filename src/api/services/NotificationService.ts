@@ -52,6 +52,16 @@ export class NotificationService {
     const body = payload.body;
     const data = payload.data;
 
+    //if title or body is empty or whitespace, return error
+    if (!title || !body || !title.trim() || !body.trim()) {
+      return {
+        success: false,
+        sent: 0,
+        failed: tokens.length,
+        errors: ['Title and body are required']
+      };
+    }
+
     //publish to rabbitmq
     const rabbitMQ = RabbitMQ.getInstance();
     

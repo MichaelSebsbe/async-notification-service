@@ -10,7 +10,7 @@ export const apiKeyMiddleware = (req: Request, res: Response, next: NextFunction
     const apiKey = req.headers['ns-api-key'];
 
     if (!apiKey || apiKey !== validApiKey) {
-        return res.status(401).json({ error: 'Invalid or missing API key. Add it as `ns-api-key` to your header' });
+        return res.status(401).json({ errors: ['Invalid or missing API key. Add it as `ns-api-key` to your header'] });
     }
 
     next();
