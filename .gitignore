@@ -139,3 +139,5 @@ notifications.db
 
 #featurePlan file for AI
 feature-plan.md
+
+.DS_Store
