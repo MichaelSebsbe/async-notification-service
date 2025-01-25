@@ -33,6 +33,7 @@ class RabbitMQ {
 
         // Initialize connection and channel
         this.channelReady = new Promise((resolve, reject) => {
+            console.log(` [*] Connecting to queue: ${this.queueName}`);
             amqp.connect(url, (error0, connection) => {
                 if (error0) {
                     reject(error0);

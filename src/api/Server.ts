@@ -33,7 +33,7 @@ export class Server {
         // Management portal route
         if (process.env.CREATE_MANAGEMENT_PORTAL === 'true') {
             this.app.use('/management', express.static(
-                path.join(__dirname, '../public/management')
+                path.join(__dirname, '../../public/management')
             ));
         }
 

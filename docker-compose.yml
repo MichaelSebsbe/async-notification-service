@@ -8,4 +8,16 @@ services:
         environment:
             RABBITMQ_DEFAULT_USER: guest    
             RABBITMQ_DEFAULT_PASS: guest    
-        
+    notification:
+        image: node:23.2.0-alpine
+        container_name: notification-service
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: sh -c "apk add --no-cache python3 py3-pip make g++ && npm install --build-from-source && npm run build && npm start"
+        environment:
+            - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+        depends_on:
+            - rabbitmq

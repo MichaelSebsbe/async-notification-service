@@ -16,22 +16,15 @@ This service provides two distinct ways to send notifications:
 > **Note**: Device token management (registration, updates, deletion) is only available through the HTTP API.
 
 ## Prerequisites
-
-- Node.js (v16 or higher)
 - Docker and Docker Compose
 - Apple Developer Account credentials for iOS push notifications
 
 ## Setup
 
 1. Clone the repository
-2. Install dependencies:
-```sh
-npm install
-```
 
 3. Create a `.env` file in the root directory with the following configuration:
 ```
-RABBITMQ_URL = "amqp://localhost"
 RABBITMQ_QUEUE_NAME = "test_queue"
 
 APN_TEAM_ID = "YOUR_TEAM_ID"
@@ -48,24 +41,9 @@ CREATE_MANAGEMENT_PORTAL = true
 
 ## Running the Service
 
-1. Start RabbitMQ using Docker Compose:
+1. Start RabbitMQ and notfication service using Docker Compose:
 ```sh
 docker-compose up -d
-```
-
-2. Build the TypeScript code:
-```sh
-npm run build
-```
-
-3. Start the service:
-```sh
-npm start
-```
-
-For development with hot-reload:
-```sh
-npm run dev
 ```
 
 ## How It Works

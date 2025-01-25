@@ -45,7 +45,10 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
 {
     "token": "string",
     "userId": "number" (optional),
-    "platform": "ios" | "android" | "web"
+    "platform": "ios" | "android" | "web",
+    "username": "string" (optional), qwsAÀ
+    "first_name": "string" (optional),
+    "last_name" : "string" (optional),
 }
 ```
 **Response:** (201 Created)

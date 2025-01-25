@@ -18,6 +18,9 @@ export class TokenService {
                 token TEXT NOT NULL,
                 user_id INT NOT NULL,
                 platform TEXT NOT NULL,
+                username TEXT,
+                first_name TEXT,
+                last_name TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(token, user_id)
@@ -32,16 +35,16 @@ export class TokenService {
     async register(payload: RegisterTokenPayload): Promise<Token> {
         return new Promise((resolve, reject) => {
             const sql = `
-                INSERT INTO tokens (token, user_id, platform)
-                VALUES (?, ?, ?)
+                INSERT INTO tokens (token, user_id, username, first_name, last_name, platform)
+                VALUES (?, ?, ?, ?, ?, ?)
                 RETURNING *;
             `;
             
-            this.db.get(sql, [payload.token, payload.userId, payload.platform], (err, row) => {
+            this.db.get(sql, [payload.token, payload.userId, payload.username, payload.first_name, payload.last_name, payload.platform], (err, row) => {
                 if (err) {
                     // Handle unique constraint violation
                     if (err.message.includes('UNIQUE constraint failed')) {
-                        return reject(new Error('Token User Pair already exists'));
+                        return reject(new Error('Token User_id Pair already exists'));
                     }
                     return reject(err);
                 }
@@ -135,6 +138,8 @@ export class TokenService {
                 if (err) return reject(err);
 
                 resolve(rows);
+
+                console.log(rows);
             });
         });
     }
@@ -158,6 +163,9 @@ export class TokenService {
             token: row.token,
             userId: row.user_id,
             platform: row.platform,
+            username: row.username,
+            first_name: row.first_name,
+            last_name: row.last_name,
             createdAt: new Date(row.created_at),
             updatedAt: new Date(row.updated_at)
         };
