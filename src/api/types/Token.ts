@@ -1,7 +1,7 @@
 export interface Token {
     id: string;
     token: string;
-    userId?: number;
+    userId?: string;
     platform: 'ios' | 'android' | 'web';
     username?: string;
     first_name?: string;
@@ -12,7 +12,7 @@ export interface Token {
 
 export interface RegisterTokenPayload {
     token: string;
-    userId?: number;
+    userId?: string;
     platform: 'ios' | 'android' | 'web';
     username?: string;
     first_name?: string;
@@ -22,5 +22,5 @@ export interface RegisterTokenPayload {
 export interface UpdateTokenPayload {
     oldToken: string;
     newToken: string;
-    userId?: number;
+    userId?: string;
 }
