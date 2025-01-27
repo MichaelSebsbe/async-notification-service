@@ -15,15 +15,17 @@ export class TokenService {
         const sql = `
             CREATE TABLE IF NOT EXISTS tokens (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                session_id TEXT,
                 token TEXT NOT NULL,
-                user_id TEXT NOT NULL,
+                user_id TEXT,
                 platform TEXT NOT NULL,
                 username TEXT,
                 first_name TEXT,
                 last_name TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(token, user_id)
+                UNIQUE(token, user_id),
+                UNIQUE(session_id)
             )
         `;
 
@@ -35,16 +37,16 @@ export class TokenService {
     async register(payload: RegisterTokenPayload): Promise<Token> {
         return new Promise((resolve, reject) => {
             const sql = `
-                INSERT INTO tokens (token, user_id, username, first_name, last_name, platform)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO tokens (session_id, token, user_id, username, first_name, last_name, platform)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 RETURNING *;
             `;
             
-            this.db.get(sql, [payload.token, payload.userId, payload.username, payload.first_name, payload.last_name, payload.platform], (err, row) => {
+            this.db.get(sql, [payload.sessionId, payload.token, payload.userId, payload.username, payload.first_name, payload.last_name, payload.platform], (err, row) => {
                 if (err) {
                     // Handle unique constraint violation
                     if (err.message.includes('UNIQUE constraint failed')) {
-                        return reject(new Error('Token User_id Pair already exists'));
+                        return reject(new Error(err.message));
                     }
                     return reject(err);
                 }
@@ -80,15 +82,13 @@ export class TokenService {
         });
     }
 
-    async removeBySession(sessionId: string): Promise<void> {
+    async removeBySession(sessionId: string): Promise<void> { 
         return new Promise((resolve, reject) => {
-            const sql = 'DELETE FROM tokens WHERE id = ?';
-            
-            console.log(sessionId);
+            const sql = 'DELETE FROM tokens WHERE session_id = ?';
 
             this.db.run(sql, [sessionId], function(err) {
                 if (err) return reject(err);
-                if (this.changes === 0) return reject(new Error('Token not found id: ' + sessionId));
+                if (this.changes === 0) return reject(new Error('Token not found session_id: ' + sessionId));
                 resolve();
             });
         });
@@ -161,6 +161,7 @@ export class TokenService {
     private mapRowToToken(row: any): Token {
         return {
             id: row.id,
+            sessionId: row.session_id,
             token: row.token,
             userId: row.user_id,
             platform: row.platform,

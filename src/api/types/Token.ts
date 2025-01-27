@@ -1,5 +1,6 @@
 export interface Token {
     id: string;
+    sessionId?: string;
     token: string;
     userId?: string;
     platform: 'ios' | 'android' | 'web';
@@ -11,6 +12,7 @@ export interface Token {
 }
 
 export interface RegisterTokenPayload {
+    sessionId?: string;
     token: string;
     userId?: string;
     platform: 'ios' | 'android' | 'web';

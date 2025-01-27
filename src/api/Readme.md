@@ -1,5 +1,14 @@
 # Notification Service API Documentation
 
+## ✨ Key Features
+- **Anonymous Token Registration**: Register device tokens before user authentication, enabling notifications for users who haven't logged in yet (e.g., newly downloaded apps)
+- **Multi-Device Support**: Allows multiple unique tokens per user, enabling notifications across all user's devices
+- **Multi-Account Support**: Supports multiple users/sessions with the same device token, perfect for apps that allow multiple account logins on a single device
+- **Platform Flexibility**: Designed for iOS, Android(coming soon), and Web platforms(coming soon)
+- **Flexible Targeting**: Send notifications by user IDs, device tokens, platforms, or broadcast to all
+- **Management Portal**: Optional web interface for sending broadcast notifications
+- **Session Management**: Track and manage tokens by session IDs for better user experience
+
 This service manages device tokens for push notifications across different platforms (iOS, Android, and Web).
 > NOTE: Android and Web are not yet implemented 
 
@@ -43,10 +52,11 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
 **Request Body:**
 ```json
 {
+    "sessionId": "string" (optional),
     "token": "string",
     "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
-    "username": "string" (optional), qwsAÀ
+    "username": "string" (optional),
     "first_name": "string" (optional),
     "last_name" : "string" (optional),
 }
@@ -55,6 +65,7 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
 ```json
 {
     "id": "string",
+    "sessionId": "string",
     "token": "string",
     "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
@@ -62,8 +73,6 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
     "updatedAt": "date"
 }
 ```
-
-NOTE: Store the id in pair with the users session to remove when user ends session.
 
 ### Update Token (PUT `/api/notifications/token`)
 **Request Body:**
@@ -78,6 +87,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 ```json
 {
     "id": "string",
+    "sessionId": "string",
     "token": "string",
     "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
@@ -110,7 +120,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 
 ### Remove Session Token (DELETE `/api/notifications/session/:sessionId`)
 **Parameters:**
-- `sessionId`: The session ID whose token should be removed
+- `sessionId`: The sessionId whose token should be removed
 
 **Response:** (200 OK)
 ```json

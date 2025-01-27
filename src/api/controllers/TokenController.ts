@@ -69,12 +69,6 @@ export class TokenController extends ControllerErrorHandling {
     removeBySession = async (req: Request, res: Response): Promise<void> => {
         try {
             const { sessionId } = req.params;
-
-            //check of id is a number
-            if(isNaN(Number(sessionId))){
-                res.status(400).json({ error: 'Invalid session id' });
-                return;
-            }
             
             await this.tokenService.removeBySession(sessionId);
             res.status(200).json({ success: true });
