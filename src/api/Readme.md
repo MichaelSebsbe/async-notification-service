@@ -44,7 +44,7 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
 ```json
 {
     "token": "string",
-    "userId": "number" (optional),
+    "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
     "username": "string" (optional), qwsAÀ
     "first_name": "string" (optional),
@@ -56,7 +56,7 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
 {
     "id": "string",
     "token": "string",
-    "userId": "number" (optional),
+    "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
     "createdAt": "date",
     "updatedAt": "date"
@@ -71,7 +71,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 {
     "oldToken": "string",
     "newToken": "string",
-    "userId": "number" (optional)
+    "userId": "string" (optional)
 }
 ```
 **Response:** (200 OK)
@@ -79,7 +79,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 {
     "id": "string",
     "token": "string",
-    "userId": "number" (optional),
+    "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
     "createdAt": "date",
     "updatedAt": "date"
@@ -143,7 +143,7 @@ NOTE: Store the id in pair with the users session to remove when user ends sessi
 **Request Body:**
 ```json
 {
-    "userIds": number[],
+    "userIds": "string"[],
     "title": "string",
     "body": "string",
     "data": object (optional)
