@@ -132,9 +132,10 @@ export class TokenService {
 
     async getTokenByUserids(userIds: string[]): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT token, platform FROM tokens WHERE user_id IN (' + userIds.join() + ')';
-            
-            this.db.all(sql, [], (err, rows) => {
+            const placeholders = userIds.map(() => '?').join(',');
+            const sql = `SELECT token, platform FROM tokens WHERE user_id IN (${placeholders})`;
+
+            this.db.all(sql, userIds, (err: Error | null, rows: any[]) => {
                 if (err) return reject(err);
 
                 resolve(rows);
