@@ -29,7 +29,7 @@ export class NotificationService {
     }
   }
 
-  async sendToUsers(userIds: number[], payload: NotificationPayload): Promise<SendNotificationResponse> {
+  async sendToUsers(userIds: string[], payload: NotificationPayload): Promise<SendNotificationResponse> {
     const tokens = await this.tokenService.getTokenByUserids(userIds) as MobileRegID[];
 
     return this.sendNotifications(tokens, payload); 

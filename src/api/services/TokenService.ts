@@ -16,7 +16,7 @@ export class TokenService {
             CREATE TABLE IF NOT EXISTS tokens (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 token TEXT NOT NULL,
-                user_id INT NOT NULL,
+                user_id TEXT NOT NULL,
                 platform TEXT NOT NULL,
                 username TEXT,
                 first_name TEXT,
@@ -130,7 +130,7 @@ export class TokenService {
         });
     }
 
-    async getTokenByUserids(userIds: number[]): Promise<Array<any>> {
+    async getTokenByUserids(userIds: string[]): Promise<Array<any>> {
         return new Promise((resolve, reject) => {
             const sql = 'SELECT token, platform FROM tokens WHERE user_id IN (' + userIds.join() + ')';
             
