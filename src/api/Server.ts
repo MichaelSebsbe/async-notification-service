@@ -4,6 +4,9 @@ import tokenRoutes from './routes/tokenRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import path from 'path';
 
+import cron from 'node-cron';
+import { deleteExpiredTokens } from './services/TokenService';
+
 export class Server {
     private app: Express;
     private server: any;
@@ -13,6 +16,7 @@ export class Server {
         this.setupMiddleware();
         this.setupRoutes();
         this.setupErrorHandling();
+        this.startCronJobs();
     }
 
     private setupMiddleware(): void {
@@ -88,5 +92,12 @@ export class Server {
         }
         
         process.exit(0);
+    }
+    
+    private startCronJobs(): void{
+        //runs every min
+        cron.schedule('* * * * *', () => {
+            deleteExpiredTokens();
+        });
     }
 }

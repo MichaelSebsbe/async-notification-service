@@ -24,6 +24,7 @@ export class TokenService {
                 last_name TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                expires_at DATETIME,
                 UNIQUE(token, user_id),
                 UNIQUE(session_id)
             )
@@ -37,16 +38,29 @@ export class TokenService {
     async register(payload: RegisterTokenPayload): Promise<Token> {
         return new Promise((resolve, reject) => {
             const sql = `
-                INSERT INTO tokens (session_id, token, user_id, username, first_name, last_name, platform)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO tokens (session_id, token, user_id, username, first_name, last_name, platform, expires_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 RETURNING *;
             `;
             
-            this.db.get(sql, [payload.sessionId, payload.token, payload.userId, payload.username, payload.first_name, payload.last_name, payload.platform], (err, row) => {
+            this.db.get(sql, [payload.sessionId, payload.token, payload.userId, payload.username, payload.first_name, payload.last_name, payload.platform, payload.expires_at], (err, row) => {
                 if (err) {
-                    // Handle unique constraint violation
                     if (err.message.includes('UNIQUE constraint failed')) {
-                        return reject(new Error(err.message));
+                        const updateSql = `
+                            UPDATE tokens 
+                            SET session_id = ?, username = ?, first_name = ?, last_name = ?, platform = ?, expires_at = ?, updated_at = datetime('now')
+                            WHERE token = ? AND user_id = ?
+                            RETURNING *;
+                        `;
+                        return this.db.get(
+                            updateSql, 
+                            [payload.sessionId, payload.username, payload.first_name, payload.last_name, payload.platform, payload.expires_at, payload.token, payload.userId],
+                            (updateErr, updatedRow) => {
+                                if (updateErr) return reject(updateErr);
+                                if (!updatedRow) return reject(new Error('Failed to update token'));
+                                return resolve(this.mapRowToToken(updatedRow));
+                            }
+                        );
                     }
                     return reject(err);
                 }
@@ -118,13 +132,16 @@ export class TokenService {
         });
     }
 
-    async getAllTokens(): Promise<Array<any>> {
+    async getAllTokens(excludeExpired = true): Promise<Array<any>> { //so as to not notify expired tokens until cron job deletes them
         return new Promise((resolve, reject) => {
-            const sql = 'SELECT distinct token, platform FROM tokens';
+            const sql = excludeExpired ? 
+            "SELECT distinct token, platform FROM tokens WHERE (expires_at > datetime('now') OR expires_at IS NULL) " 
+            :
+            'SELECT distinct token, platform FROM tokens';
             
             this.db.all(sql, [], (err, rows) => {
                 if (err) return reject(err);
-
+                console.log(rows); 
                 resolve(rows);
             });
         });
@@ -168,8 +185,9 @@ export class TokenService {
             username: row.username,
             first_name: row.first_name,
             last_name: row.last_name,
-            createdAt: new Date(row.created_at),
-            updatedAt: new Date(row.updated_at)
+            created_at: new Date(row.created_at),
+            updated_at: new Date(row.updated_at),
+            expires_at: row.expires_at ? new Date(row.expires_at) : undefined
         };
     }
 
@@ -182,4 +200,19 @@ export class TokenService {
             });
         });
     }
+}
+
+export function deleteExpiredTokens(): Promise<Boolean> {
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM tokens WHERE expires_at < datetime('now')`;
+        
+        db.run(sql, [], function(err) {
+            if (err) {
+                console.error('Failed to delete expired tokens:', err);
+                return resolve(false);
+            }
+            console.log(`Deleted ${this.changes} expired tokens`);
+            resolve(true);
+        });
+    });
 }

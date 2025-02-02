@@ -48,6 +48,15 @@ export class NotificationService {
   }
 
   private async sendNotifications(tokens: MobileRegID[], payload: NotificationPayload): Promise<SendNotificationResponse> {
+    if (!tokens.length) {
+      return {
+        success: false,
+        sent: 0,
+        failed: 0,
+        errors: ['No tokens found']
+      };
+    }
+    
     const title = payload.title;
     const body = payload.body;
     const data = payload.data;

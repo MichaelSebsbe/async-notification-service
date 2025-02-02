@@ -7,8 +7,9 @@ export interface Token {
     username?: string;
     first_name?: string;
     last_name?: string;
-    createdAt: Date;
-    updatedAt: Date;
+    created_at: Date;
+    updated_at: Date;
+    expires_at?: Date;
 }
 
 export interface RegisterTokenPayload {
@@ -19,6 +20,7 @@ export interface RegisterTokenPayload {
     username?: string;
     first_name?: string;
     last_name?: string;
+    expires_at?: string; 
 }
 
 export interface UpdateTokenPayload {

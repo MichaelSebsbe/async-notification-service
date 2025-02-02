@@ -8,6 +8,8 @@
 - **Flexible Targeting**: Send notifications by user IDs, device tokens, platforms, or broadcast to all
 - **Management Portal**: Optional web interface for sending broadcast notifications
 - **Session Management**: Track and manage tokens by session IDs for better user experience
+- **Token Expiration**: Supports automatic token expiration if an expiry date is provided during registration
+- **Token Management**: Automatically replaces existing tokens when registering with the same user/token pair or session ID
 
 This service manages device tokens for push notifications across different platforms (iOS, Android, and Web).
 > NOTE: Android and Web are not yet implemented 
@@ -59,6 +61,7 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
     "username": "string" (optional),
     "first_name": "string" (optional),
     "last_name" : "string" (optional),
+    "expires_at": "string" (optional) //ISO 8601 format, make sure to include timezone
 }
 ```
 **Response:** (201 Created)
@@ -69,10 +72,13 @@ If `CREATE_MANAGEMENT_PORTAL = true`, a `/management` route is enabled to show s
     "token": "string",
     "userId": "string" (optional),
     "platform": "ios" | "android" | "web",
-    "createdAt": "date",
-    "updatedAt": "date"
+    "expires_at": "date" (optional),
+    "created_at": "date",
+    "updated_at": "date"
 }
 ```
+
+> **Note**: If you register a token with an existing user/token pair or session ID, the old token will be replaced with the new one. This ensures proper token rotation and prevents duplicate entries.
 
 ### Update Token (PUT `/api/notifications/token`)
 **Request Body:**

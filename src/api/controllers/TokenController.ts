@@ -21,6 +21,10 @@ export class TokenController extends ControllerErrorHandling {
                 return;
             }
 
+            if (payload.expires_at) {
+                payload.expires_at = this.validateAndFormatUTC(payload.expires_at);
+            }
+
             const token = await this.tokenService.register(payload);
             res.status(201).json(token);
         } catch (error: unknown) {
@@ -76,5 +80,31 @@ export class TokenController extends ControllerErrorHandling {
             this.handleError(error, res);
         }
     };
+
+    private validateAndFormatUTC(dateStr: string): string {     
+        // Regex for ISO 8601 with mandatory timezone
+        const iso8601Regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/;
+        if (!iso8601Regex.test(dateStr)) {
+            throw new Error("Datetime must be in ISO 8601 format with explicit timezone (e.g., '2023-10-05T12:00:00Z'). Provided: " + dateStr);
+        }
+
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) {
+          throw new Error("Invalid date format.");
+        }
+      
+        // Helper to pad numbers with a leading zero if necessary
+        const pad = (num: number): string => num.toString().padStart(2, '0');
+      
+        // Format using the UTC values
+        const year = date.getUTCFullYear();
+        const month = pad(date.getUTCMonth() + 1); // Months are 0-indexed
+        const day = pad(date.getUTCDate());
+        const hours = pad(date.getUTCHours());
+        const minutes = pad(date.getUTCMinutes());
+        const seconds = pad(date.getUTCSeconds());
+      
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
 }
 
